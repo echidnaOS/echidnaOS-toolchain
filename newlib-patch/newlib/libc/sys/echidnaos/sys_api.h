@@ -5,6 +5,26 @@
 #ifndef __SYS_API_H__
 #define __SYS_API_H__
 
+#include <stdint.h>
+
+typedef struct {
+    char filename[2048];
+    int filetype;
+    uint64_t size;
+} vfs_metadata_t;
+
+typedef struct {
+    char* path;
+    char* ti_stdin;
+    char* ti_stdout;
+    char* ti_stderr;
+    char* pwd;
+    char* name;
+    char* server_name;
+    int argc;
+    char** argv;
+} task_info_t;
+
 #define VFS_FILE_TYPE 0
 #define VFS_DIRECTORY_TYPE 1
 #define VFS_DEVICE_TYPE 2
