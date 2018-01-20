@@ -15,8 +15,8 @@ void _init_signal(void);
 
 void _start_c(void) {
 
-    int argc = *((int*)0x1000);
-    char** argv = (char**)0x1010;
+    int argc = *((int*)0x1001000);
+    char** argv = (char**)0x1001010;
     
     _init_signal();
 

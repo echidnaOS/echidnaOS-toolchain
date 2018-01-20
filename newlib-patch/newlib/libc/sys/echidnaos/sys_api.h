@@ -19,8 +19,8 @@ typedef struct {
     char* ti_stdout;
     char* ti_stderr;
     char* pwd;
-    char* name;
-    char* server_name;
+    char* unused0;
+    char* unused1;
     int argc;
     char** argv;
 } task_info_t;
@@ -184,64 +184,6 @@ typedef struct {
                      : "eax", "edx" );  \
 })
 
-#define OS_ipc_send_packet(pid, payload, len) ({ \
-    asm volatile (  "movl $0x08, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     :                  \
-                     : "c" (pid),        \
-                       "d" (payload),    \
-                       "D" (len)      \
-                     : "eax" );         \
-})
-
-#define OS_ipc_read_packet(payload) ({  \
-    uint32_t pid;                            \
-    asm volatile (  "movl $0x09, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (pid)         \
-                     : "c" (payload)    \
-                     : "edx" );         \
-    pid;                                \
-})
-
-#define OS_ipc_resolve_name(server_name) ({  \
-    uint32_t pid;                            \
-    asm volatile (  "movl $0x0a, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (pid)         \
-                     : "c" (server_name)  \
-                     : "edx" );         \
-    pid;                                \
-})
-
-#define OS_ipc_payload_sender() ({      \
-    uint32_t pid;                              \
-    asm volatile (  "movl $0x0b, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (pid)         \
-                     :                  \
-                     : "edx" );         \
-    pid;                                  \
-})
-
-#define OS_ipc_payload_length() ({      \
-    uint32_t pid;                              \
-    asm volatile (  "movl $0x0c, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (pid)         \
-                     :                  \
-                     : "edx" );         \
-    pid;                                  \
-})
-
-#define OS_ipc_await() ({                \
-    asm volatile (  "movl $0x0d, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     :                  \
-                     :                    \
-                     :  );  \
-})
-
 #define OS_vfs_list(path, metadata, entry) ({  \
     int return_val;                            \
     asm volatile (  "movl $0x32, %%eax\n\t"    \
@@ -335,49 +277,6 @@ typedef struct {
                      : "c" (path)  \
                      : "edx" );         \
     return_val;                                \
-})
-
-#define OS_vdev_in_ready(value) ({               \
-    int ret; \
-    asm volatile (  "movl $0x21, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (ret) \
-                     : "c" (value)      \
-                     : "edx" );  \
-    ret; \
-})
-
-#define OS_vdev_out_ready(value) ({               \
-    int ret; \
-    asm volatile (  "movl $0x22, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (ret) \
-                     : "c" (value)      \
-                     : "edx" );  \
-    ret; \
-})
-
-#define OS_vdev_register(in, fin, out, fout) ({ \
-    int ret; \
-    asm volatile (  "movl $0x20, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (ret)                 \
-                     : "c" (in),        \
-                       "d" (fin),    \
-                       "D" (out), \
-                       "S" (fout) \
-                     :  );         \
-    ret; \
-})
-
-#define OS_vdev_await() ({                \
-    int ret; \
-    asm volatile (  "movl $0x23, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (ret)                 \
-                     :                    \
-                     : "edx" );  \
-    ret; \
 })
 
 #define OS_general_execute(value) ({               \
