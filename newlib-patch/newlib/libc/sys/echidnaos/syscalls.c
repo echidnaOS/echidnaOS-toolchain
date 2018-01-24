@@ -82,9 +82,6 @@ int close(int file) {
 
 }
 
-//char *__env[1] = { 0 };
-//char **environ = __env;
-
 int execve(char *name, char **argv, char **env) {
 
     return -1;
@@ -213,24 +210,3 @@ int write(int file, char *ptr, int len) {
     return OS_write(file, ptr, len);
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

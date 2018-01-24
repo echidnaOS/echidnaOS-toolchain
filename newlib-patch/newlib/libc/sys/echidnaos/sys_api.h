@@ -14,15 +14,16 @@ typedef struct {
 } vfs_metadata_t;
 
 typedef struct {
-    char* path;
-    char* ti_stdin;
-    char* ti_stdout;
-    char* ti_stderr;
-    char* pwd;
-    char* unused0;
-    char* unused1;
+    char *path;
+    char *ti_stdin;
+    char *ti_stdout;
+    char *ti_stderr;
+    char *pwd;
+    char *unused0;
+    char *unused1;
     int argc;
-    char** argv;
+    char **argv;
+    char **environ;
 } task_info_t;
 
 #define VFS_FILE_TYPE 0
