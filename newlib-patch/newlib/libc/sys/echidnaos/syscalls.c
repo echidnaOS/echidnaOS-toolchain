@@ -84,7 +84,7 @@ int close(int file) {
 
 int execve(char *name, char **argv, char **env) {
 
-    return -1;
+    return OS_execve(name, argv, env);
     
 }
 
@@ -201,7 +201,7 @@ int unlink(char *name) {
 
 int wait(int *status) {
 
-    return -1;
+    return OS_wait(status);
 
 }
 
