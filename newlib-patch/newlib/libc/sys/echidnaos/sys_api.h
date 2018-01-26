@@ -56,6 +56,28 @@ typedef struct {
     return_val;                                \
 })
 
+#define OS_execve(arg1, arg2, arg3) ({  \
+    int return_val;                            \
+    asm volatile (  "movl $0x03, %%eax\n\t"    \
+                    "int $0x80\n\t"         \
+                     : "=a" (return_val)         \
+                     : "c" (arg1),  \
+                       "d" (arg2), \
+                       "D" (arg3) \
+                     :  );         \
+    return_val;                                \
+})
+
+#define OS_wait(arg1) ({  \
+    int return_val;                            \
+    asm volatile (  "movl $0x04, %%eax\n\t"    \
+                    "int $0x80\n\t"         \
+                     : "=a" (return_val)         \
+                     : "c" (arg1)  \
+                     :  );         \
+    return_val;                                \
+})
+
 #define OS_close(handle) ({  \
     int return_val;                            \
     asm volatile (  "movl $0x2b, %%eax\n\t"    \
