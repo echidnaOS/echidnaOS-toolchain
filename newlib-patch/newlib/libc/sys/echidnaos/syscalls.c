@@ -171,8 +171,9 @@ int read(int file, char *ptr, int len) {
 
 caddr_t sbrk(int size) {
 
-    uint32_t ptr = OS_get_heap_base() + OS_get_heap_size();
-    OS_resize_heap(OS_get_heap_size() + size);
+    size_t ptr = OS_get_heap_base() + OS_get_heap_size();
+    if (OS_resize_heap(OS_get_heap_size() + size) == -1)
+        return -1;
     return (caddr_t)ptr;
 
 }
