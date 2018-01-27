@@ -60,45 +60,8 @@ make install
 cd ..
 unset PREFIX
 
-# build autotools for newlib
-
-export PATH="`pwd`/perl520/bin:$CLEANPATH"
-mkdir autotools
-tar -xvf automake-1.12.tar.gz
-tar -xvf autoconf-2.65.tar.gz
-export PREFIX="`pwd`/autotools"
-mkdir build-automake && cd build-automake && ../automake-1.12/configure --prefix="$PREFIX" && make && make install && cd ..
-mkdir build-autoconf && cd build-autoconf && ../autoconf-2.65/configure --prefix="$PREFIX" && make && make install && cd ..
-export PATH="$CLEANPATH"
-unset PREFIX
-
-# patch and build newlib
-
-export PATH="`pwd`/autotools/bin:$CLEANPATH"
-tar -xvf newlib-2.5.0.tar.gz
-cp -rv newlib-patch/* newlib-2.5.0/
-pushd newlib-2.5.0/newlib/libc/sys
-autoconf
-popd
-pushd newlib-2.5.0/newlib/libc/sys/echidnaos
-autoreconf
-popd
-mkdir native
-export DESTDIR="`pwd`/native"
-export PATH="`pwd`/toolchain/bin:$CLEANPATH"
-mkdir build-newlib
-cd build-newlib
-../newlib-2.5.0/configure --prefix=/usr --target=i386-echidnaos
-make all
-make DESTDIR="$DESTDIR" install
-cd ..
-cp -rv $DESTDIR/usr/i386-echidnaos/* "$DESTDIR/usr/"
-unset DESTDIR
-export PATH="$CLEANPATH"
-
 # autotools part 2
 
-rm -rf autotools build-automake build-autoconf
 export PATH="`pwd`/perl520/bin:$CLEANPATH"
 mkdir autotools
 tar -xvf automake-1.11.6.tar.gz
@@ -127,7 +90,7 @@ export PATH="$OLDPATH"
 unset OLDPATH
 mkdir build-binutils
 cd build-binutils
-../binutils-2.28/configure --target=$TARGET --host=$HOST --prefix="$PREFIX" --with-sysroot="$PREFIX" --disable-werror
+../binutils-2.28/configure --target=$TARGET --host=$HOST --prefix="$PREFIX" --with-sysroot="$PREFIX" --disable-werror --disable-nls
 make
 make install
 cd ..
@@ -145,7 +108,7 @@ export PATH="$OLDPATH"
 unset OLDPATH
 mkdir build-gcc
 cd build-gcc
-../gcc-7.1.0/configure --target=$TARGET --host=$HOST --prefix="$PREFIX" --with-sysroot="$PREFIX" --enable-languages=c,c++ --with-newlib
+../gcc-7.1.0/configure --target=$TARGET --host=$HOST --prefix="$PREFIX" --with-sysroot="$PREFIX" --enable-languages=c,c++ --with-newlib --disable-nls --disable-shared
 make all-gcc all-target-libgcc
 make install-gcc install-target-libgcc
 cd ..

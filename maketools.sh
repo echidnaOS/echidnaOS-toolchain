@@ -211,6 +211,11 @@ unset PREFIX
 unset TARGET
 export PATH="$CLEANPATH"
 
+# copy headers
+
+cp newlib-patch/newlib/libc/sys/echidnaos/*.h toolchain/usr/include/
+cp newlib-patch/newlib/libc/sys/echidnaos/*.h toolchain/usr/i386-echidnaos/include/
+
 # cleanup
 
 printf "Cleaning up\n"

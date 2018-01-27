@@ -6,8 +6,80 @@
 #include <sys/errno.h>
 #include <sys/time.h>
 #include <stdio.h>
+#include "dirent.h"
 
 #include "sys_api.h"
+
+typedef struct dirent dirent_t;
+
+static dirent_t dirent_struct;
+
+extern char **environ;
+
+/* stubs to compile gcc */
+
+int dup2(int oldfd, int newfd) {
+    return -1;
+}
+
+int pipe(int pipefd[2]) {
+    return -1;
+}
+
+unsigned int sleep(unsigned int seconds) {
+    return seconds;
+}
+
+unsigned alarm(unsigned seconds) {
+    return 0;
+}
+
+/* end of stubs */
+
+int execvp(const char *file, char *const argv[]) {
+    return execve(file, argv, environ);
+}
+
+int mkdir(const char *path, mode_t mode) {
+    if (OS_vfs_mkdir(path, mode) == VFS_FAILURE)
+        return -1;
+
+    return 0;
+}
+
+DIR *opendir(const char *path) {
+    vfs_metadata_t metadata;
+    DIR *dirhandle;
+
+    if (OS_vfs_get_metadata(path, &metadata, VFS_DIRECTORY_TYPE) == VFS_FAILURE)
+        return (DIR *)0;
+
+    dirhandle = malloc(sizeof(DIR));
+    if (!dirhandle)
+        return (DIR *)0;
+
+    dirhandle->entry = 0;
+    strcpy(dirhandle->dir, path);
+
+    return dirhandle;
+}
+
+int closedir(DIR *handle) {
+    free(handle);
+    return 0;
+}
+
+struct dirent *readdir(DIR *handle) {
+    vfs_metadata_t metadata;
+
+    if (OS_vfs_list(handle->dir, &metadata, handle->entry) == VFS_FAILURE)
+        return (struct dirent *)0;
+
+    strcpy(dirent_struct.d_name, metadata.filename);
+    dirent_struct.d_ino = handle->entry++;
+
+    return &dirent_struct;
+}
 
 int rmdir(const char *path) {
 
