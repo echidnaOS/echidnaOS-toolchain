@@ -1,5 +1,6 @@
 cat <<EOF
 
+OUTPUT_FORMAT(binary)
 ENTRY(_start)
 
 SECTIONS
