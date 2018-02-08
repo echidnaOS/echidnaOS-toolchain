@@ -10,6 +10,8 @@
 
 #include "sys_api.h"
 
+void *__dso_handle = (void *)0;
+
 typedef struct dirent dirent_t;
 
 static dirent_t dirent_struct;
@@ -38,6 +40,13 @@ unsigned alarm(unsigned seconds) {
 
 int execvp(const char *file, char *const argv[]) {
     return execve(file, argv, environ);
+}
+
+int chdir(const char *path) {
+    if (OS_vfs_cd(path) == VFS_FAILURE)
+        return -1;
+
+    return 0;
 }
 
 int mkdir(const char *path, mode_t mode) {
@@ -158,6 +167,12 @@ int execve(char *name, char **argv, char **env) {
 
     return OS_execve(name, argv, env);
     
+}
+
+int execv(char *name, char **argv) {
+
+    return OS_execve(name, argv, environ);
+
 }
 
 int fork(void) {

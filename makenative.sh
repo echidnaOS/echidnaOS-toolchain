@@ -99,6 +99,7 @@ tar -xvf gcc-7.1.0.tar.bz2
 cd gcc-7.1.0 && contrib/download_prerequisites && cd ..
 chmod 777 gcc-7.1.0/mpc-1.0.3/config.sub
 cp -rv gcc-patch/* gcc-7.1.0/
+sed -i 's/PICFLAG = @PICFLAG@//g' gcc-7.1.0/gcc/Makefile.in
 export OLDPATH="$PATH"
 export PATH="`pwd`/autotools/bin:$PATH"
 pushd gcc-7.1.0/libstdc++-v3
@@ -108,7 +109,7 @@ export PATH="$OLDPATH"
 unset OLDPATH
 mkdir build-gcc
 cd build-gcc
-../gcc-7.1.0/configure --target=$TARGET --host=$HOST --prefix="$PREFIX" --with-sysroot="$PREFIX" --enable-languages=c,c++ --with-newlib --disable-nls --disable-shared
+../gcc-7.1.0/configure --target=$TARGET --host=$HOST --prefix="$PREFIX" --with-sysroot="$PREFIX" --enable-languages=c,c++ --with-newlib --disable-nls --disable-shared --disable-host-shared --disable-default-pie
 make all-gcc all-target-libgcc
 make install-gcc install-target-libgcc
 cd ..

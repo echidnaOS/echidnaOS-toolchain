@@ -3,6 +3,10 @@
 
 #include <sys/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct dirent {
     ino_t d_ino;
     char d_name[128];
@@ -16,5 +20,9 @@ typedef struct {
 DIR *opendir(const char *);
 int closedir(DIR *);
 struct dirent *readdir(DIR *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

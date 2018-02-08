@@ -3,6 +3,7 @@
 /build-*
 /tools/
 /toolchain/
+/native/
 
 /echidna.img
 /echidnafs/echfs-utils
