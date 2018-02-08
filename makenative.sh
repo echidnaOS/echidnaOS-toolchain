@@ -134,6 +134,8 @@ unset TARGET
 unset HOST
 export PATH="$CLEANPATH"
 
+touch native/lib/gcc/i386-echidnaos/7.1.0/specs
+
 # cleanup
 
 printf "Cleaning up\n"
