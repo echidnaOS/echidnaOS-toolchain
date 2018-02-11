@@ -486,7 +486,11 @@ case "${host}" in
 	##newlib_cflags="${newlib_cflags} -idirafter ${gcc_dir}include"
 	;;
 
-  i386-*-echidnaos*)
+  i[3-7]86-*-echidnaos*)
+	sys_dir=echidnaos
+	;;
+
+  x86_64-*-echidnaos*)
 	sys_dir=echidnaos
 	;;
 

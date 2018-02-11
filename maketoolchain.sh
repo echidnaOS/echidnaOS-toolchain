@@ -105,7 +105,7 @@ export PATH="$CLEANPATH"
 
 # autotools part 2
 
-rm -rf autotools build-automake build-autoconf
+rm -rf autotools build-automake build-autoconf automake-1.11.6 autoconf-2.64
 export PATH="`pwd`/perl520/bin:$CLEANPATH"
 mkdir autotools
 tar -xvf automake-1.11.6.tar.gz

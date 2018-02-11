@@ -13,7 +13,7 @@ target=fixinc.sh
 case $machine in
     i?86-*-cygwin* | \
     i?86-*-mingw32* | \
-    i386-*-echidnaos* | \
+    *-*-echidnaos* | \
     x86_64-*-mingw32* | \
     powerpc-*-eabisim* | \
     powerpc-*-eabi*    | \
