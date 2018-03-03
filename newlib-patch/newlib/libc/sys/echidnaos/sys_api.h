@@ -13,19 +13,6 @@ typedef struct {
     uint64_t size;
 } vfs_metadata_t;
 
-typedef struct {
-    char *path;
-    char *ti_stdin;
-    char *ti_stdout;
-    char *ti_stderr;
-    char *pwd;
-    char *unused0;
-    char *unused1;
-    int argc;
-    char **argv;
-    char **environ;
-} task_info_t;
-
 #define VFS_FILE_TYPE 0
 #define VFS_DIRECTORY_TYPE 1
 #define VFS_DEVICE_TYPE 2
@@ -46,7 +33,7 @@ typedef struct {
 
 #define OS_open(path, flags, mode) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x2a, %%eax\n\t"    \
+    asm volatile (  "movq $0x2a, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)         \
                      : "c" (path),  \
@@ -58,7 +45,7 @@ typedef struct {
 
 #define OS_execve(arg1, arg2, arg3) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x03, %%eax\n\t"    \
+    asm volatile (  "movq $0x03, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)         \
                      : "c" (arg1),  \
@@ -70,27 +57,27 @@ typedef struct {
 
 #define OS_wait(arg1) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x04, %%eax\n\t"    \
+    asm volatile (  "movq $0x04, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)         \
                      : "c" (arg1)  \
-                     :  );         \
+                     : "rdx" );         \
     return_val;                                \
 })
 
 #define OS_close(handle) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x2b, %%eax\n\t"    \
+    asm volatile (  "movq $0x2b, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)         \
                      : "c" (handle) \
-                     : "edx" );         \
+                     : "rdx" );         \
     return_val;                                \
 })
 
 #define OS_read(handle, buf, len) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x2c, %%eax\n\t"    \
+    asm volatile (  "movq $0x2c, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)         \
                      : "c" (handle),  \
@@ -102,7 +89,7 @@ typedef struct {
 
 #define OS_write(handle, buf, len) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x2d, %%eax\n\t"    \
+    asm volatile (  "movq $0x2d, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)         \
                      : "c" (handle),  \
@@ -114,7 +101,7 @@ typedef struct {
 
 #define OS_lseek(a, b, c) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x2e, %%eax\n\t"    \
+    asm volatile (  "movq $0x2e, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)         \
                      : "c" (a),  \
@@ -126,7 +113,7 @@ typedef struct {
 
 #define OS_signal(sig, handler) ({ \
     int ret; \
-    asm volatile (  "movl $0x16, %%eax\n\t"    \
+    asm volatile (  "movq $0x16, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (ret)                 \
                      : "c" (sig),        \
@@ -136,80 +123,56 @@ typedef struct {
 })
 
 #define OS_getpid() ({              \
-    uint32_t val;                         \
-    asm volatile (  "movl $0x15, %%eax\n\t"    \
+    int val;                         \
+    asm volatile (  "movq $0x15, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (val)      \
                      : \
-                     : "edx" );         \
+                     : "rdx" );         \
     val;                               \
 })
 
 #define OS_get_heap_base() ({              \
-    uint32_t val;                         \
-    asm volatile (  "movl $0x10, %%eax\n\t"    \
+    uint64_t val;                         \
+    asm volatile (  "movq $0x10, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (val)      \
                      : \
-                     : "edx" );         \
+                     : "rdx" );         \
     val;                               \
 })
 
 #define OS_get_heap_size() ({              \
-    uint32_t val;                         \
-    asm volatile (  "movl $0x11, %%eax\n\t"    \
+    uint64_t val;                         \
+    asm volatile (  "movq $0x11, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (val)      \
                      : \
-                     : "edx" );         \
+                     : "rdx" );         \
     val;                               \
 })
 
 #define OS_resize_heap(val) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x12, %%eax\n\t"    \
+    asm volatile (  "movq $0x12, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)      \
                      : "c" (val)  \
-                     : "edx" );         \
+                     : "rdx" );         \
     return_val;                                \
 })
 
 #define OS_pwd(value) ({                \
-    asm volatile (  "movl $0x1a, %%eax\n\t"    \
+    asm volatile (  "movq $0x1a, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      :                  \
                      : "c" (value)      \
-                     : "eax", "edx" );  \
-})
-
-#define OS_what_stdin(value) ({                \
-    asm volatile (  "movl $0x1b, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     :                  \
-                     : "c" (value)      \
-                     : "eax", "edx" );  \
-})
-
-#define OS_what_stdout(value) ({                \
-    asm volatile (  "movl $0x1c, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     :                  \
-                     : "c" (value)      \
-                     : "eax", "edx" );  \
-})
-
-#define OS_what_stderr(value) ({                \
-    asm volatile (  "movl $0x1d, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     :                  \
-                     : "c" (value)      \
-                     : "eax", "edx" );  \
+                     : "rax", "rdx" );  \
 })
 
 #define OS_vfs_list(path, metadata, entry) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x32, %%eax\n\t"    \
+    asm volatile (  "movq $0x32, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)         \
                      : "c" (path),  \
@@ -221,7 +184,7 @@ typedef struct {
 
 #define OS_vfs_get_metadata(path, metadata, type) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x33, %%eax\n\t"    \
+    asm volatile (  "movq $0x33, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)         \
                      : "c" (path),  \
@@ -231,38 +194,9 @@ typedef struct {
     return_val;                                \
 })
 
-#define OS_vfs_read(path, loc) ({  \
-    int return_val;                            \
-    uint32_t loc_low = loc & 0x00000000ffffffff; \
-    uint32_t loc_high = loc / 0x100000000; \
-    asm volatile (  "movl $0x30, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (return_val)         \
-                     : "c" (path),  \
-                       "d" (loc_low), \
-                       "D" (loc_high) \
-                     :  );         \
-    return_val;                                \
-})
-
-#define OS_vfs_write(path, loc, val) ({  \
-    int return_val;                            \
-    uint32_t loc_low = loc & 0x00000000ffffffff; \
-    uint32_t loc_high = loc / 0x100000000; \
-    asm volatile (  "movl $0x31, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (return_val)         \
-                     : "c" (path),  \
-                       "d" (loc_low), \
-                       "D" (loc_high), \
-                       "S" (val) \
-                     :  );         \
-    return_val;                                \
-})
-
 #define OS_vfs_mkdir(path, perms) ({ \
     int ret; \
-    asm volatile (  "movl $0x35, %%eax\n\t"    \
+    asm volatile (  "movq $0x35, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (ret)                 \
                      : "c" (path),        \
@@ -273,7 +207,7 @@ typedef struct {
 
 #define OS_vfs_create(path, perms) ({ \
     int ret; \
-    asm volatile (  "movl $0x36, %%eax\n\t"    \
+    asm volatile (  "movq $0x36, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (ret)                 \
                      : "c" (path),        \
@@ -284,63 +218,39 @@ typedef struct {
 
 #define OS_vfs_cd(path) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x2f, %%eax\n\t"    \
+    asm volatile (  "movq $0x2f, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)      \
                      : "c" (path)  \
-                     : "edx" );         \
+                     : "rdx" );         \
     return_val;                                \
 })
 
 #define OS_vfs_remove(path) ({  \
     int return_val;                            \
-    asm volatile (  "movl $0x34, %%eax\n\t"    \
+    asm volatile (  "movq $0x34, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (return_val)      \
                      : "c" (path)  \
-                     : "edx" );         \
+                     : "rdx" );         \
     return_val;                                \
 })
 
-#define OS_general_execute(value) ({               \
-    int ret; \
-    asm volatile (  "movl $0x01, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (ret) \
-                     : "c" (value)      \
-                     : "edx" );  \
-    ret; \
-})
-
-#define OS_general_execute_block(value) ({               \
-    uint32_t ret_low; \
-    uint32_t ret_hi; \
-    uint64_t ret; \
-    asm volatile (  "movl $0x02, %%eax\n\t"    \
-                    "int $0x80\n\t"         \
-                     : "=a" (ret_low),                 \
-                       "=d" (ret_hi) \
-                     : "c" (value)      \
-                     :  );  \
-    ret = ((uint64_t)(ret_hi) << 32) + (uint64_t)ret_low; \
-    ret; \
-})
-
 #define OS_exit(value) ({               \
-    asm volatile (  "movl $0x00, %%eax\n\t"    \
+    asm volatile (  "movq $0x00, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : \
                      : "c" (value)      \
-                     : "eax", "edx" );  \
+                     : "rax", "rdx" );  \
 })
 
 #define OS_fork() ({               \
     int ret; \
-    asm volatile (  "movl $0x05, %%eax\n\t"    \
+    asm volatile (  "movq $0x05, %%rax\n\t"    \
                     "int $0x80\n\t"         \
                      : "=a" (ret) \
                      :     \
-                     : "edx" );  \
+                     : "rdx" );  \
     ret; \
 })
 

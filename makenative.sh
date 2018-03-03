@@ -9,8 +9,8 @@ export MAKEFLAGS="-j `grep -c ^processor /proc/cpuinfo`"
 
 # check if tools were built
 
-if [ ! -f toolchain/bin/i386-echidnaos-gcc ]; then
-    printf "You must build the i386-echidnaos tools first! (./maketools.sh)\n"
+if [ ! -f toolchain/bin/x86_64-echidnaos-gcc ]; then
+    printf "You must build the x86_64-echidnaos tools first! (./maketools.sh)\n"
     exit 1
 fi
 
@@ -88,11 +88,11 @@ export DESTDIR="`pwd`/native"
 export PATH="`pwd`/toolchain/bin:$CLEANPATH"
 mkdir build-newlib
 cd build-newlib
-../newlib-2.5.0/configure --prefix=/usr --target=i386-echidnaos
+../newlib-2.5.0/configure --prefix=/usr --target=x86_64-echidnaos
 make all
 make DESTDIR="$DESTDIR" install
 cd ..
-cp -rv $DESTDIR/usr/i386-echidnaos/* "$DESTDIR/usr/"
+cp -rv $DESTDIR/usr/x86_64-echidnaos/* "$DESTDIR/usr/"
 unset DESTDIR
 export PATH="$CLEANPATH"
 
@@ -112,8 +112,8 @@ unset PREFIX
 # build target toolchain
 
 export PREFIX="`pwd`/native"
-export TARGET=i386-echidnaos
-export HOST=i386-echidnaos
+export TARGET=x86_64-echidnaos
+export HOST=x86_64-echidnaos
 export PATH="`pwd`/toolchain/bin:$CLEANPATH"
 
 tar -xvf binutils-2.28.tar.bz2
@@ -160,8 +160,8 @@ export PATH="$CLEANPATH"
 # build libstdc++
 
 export PREFIX="`pwd`/native"
-export TARGET=i386-echidnaos
-export HOST=i386-echidnaos
+export TARGET=x86_64-echidnaos
+export HOST=x86_64-echidnaos
 export PATH="`pwd`/toolchain/bin:$CLEANPATH"
 cd build-gcc
 make all-target-libstdc++-v3
@@ -172,7 +172,7 @@ unset TARGET
 unset HOST
 export PATH="$CLEANPATH"
 
-touch native/lib/gcc/i386-echidnaos/7.1.0/specs
+touch native/lib/gcc/x86_64-echidnaos/7.1.0/specs
 
 # cleanup
 
