@@ -65,6 +65,16 @@ typedef struct {
     return_val;                                \
 })
 
+#define OS_sleep(arg1) ({  \
+    int return_val;                            \
+    asm volatile (  "movq $0x06, %%rax\n\t"    \
+                    "int $0x80\n\t"         \
+                     : "=a" (return_val)         \
+                     : "c" (arg1)  \
+                     : "rdx" );         \
+    return_val;                                \
+})
+
 #define OS_close(handle) ({  \
     int return_val;                            \
     asm volatile (  "movq $0x2b, %%rax\n\t"    \

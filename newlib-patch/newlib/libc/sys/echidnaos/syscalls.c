@@ -30,10 +30,6 @@ int pipe(int pipefd[2]) {
     return -1;
 }
 
-unsigned int sleep(unsigned int seconds) {
-    return seconds;
-}
-
 unsigned int alarm(unsigned int seconds) {
     return 0;
 }
@@ -116,6 +112,10 @@ int unlink(const char *name) {
 }
 
 /* end of stubs */
+
+unsigned int sleep(unsigned int seconds) {
+    return OS_sleep(seconds);
+}
 
 int execve(const char *name, char * const argv[], char * const env[]) {
     if (OS_execve(name, argv, env)) {
