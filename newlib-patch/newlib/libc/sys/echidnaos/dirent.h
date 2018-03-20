@@ -15,6 +15,7 @@ struct dirent {
 typedef struct {
     char dir[128];
     int entry;
+    struct dirent direntt;
 } DIR;
 
 DIR *opendir(const char *);
