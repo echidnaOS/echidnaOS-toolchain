@@ -1,5 +1,6 @@
 cat <<EOF
 
+OUTPUT_FORMAT(binary)
 ENTRY(_start)
 
 SECTIONS
@@ -11,22 +12,18 @@ SECTIONS
         *(.text)
     }
 
-    .data ALIGN(4K) :
-    {
-        *(.data)
-        *(.rodata)
-    }
-
     .got ALIGN(4K) :
     {
         _GLOBAL_OFFSET_TABLE_ = .;
         *(.got)
     }
 
-    .bss ALIGN(4K) :
+    .data ALIGN(4K) :
     {
-        *(COMMON)
+        *(.rodata)
+        *(.data)
         *(.bss)
+        *(COMMON)
     }
 }
 
