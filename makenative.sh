@@ -137,7 +137,6 @@ cd gcc-7.1.0 && contrib/download_prerequisites && cd ..
 chmod 777 gcc-7.1.0/mpc-1.0.3/config.sub
 cp -rv gcc-patch/* gcc-7.1.0/
 sed -i 's/PICFLAG = @PICFLAG@//g' gcc-7.1.0/gcc/Makefile.in
-sed -i 's/abort ();//g' gcc-7.1.0/libiberty/make-temp-file.c
 export OLDPATH="$PATH"
 export PATH="`pwd`/autotools/bin:$PATH"
 pushd gcc-7.1.0/libstdc++-v3

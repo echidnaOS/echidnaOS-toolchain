@@ -236,6 +236,14 @@ typedef struct {
     return_val;                                \
 })
 
+#define OS_vfs_getpath(arg1, arg2) ({               \
+    asm volatile (  "movq $0x1b, %%rax\n\t"    \
+                    "int $0x80\n\t"         \
+                     : \
+                     : "c" (arg1), "d" (arg2)      \
+                     : "rax" );  \
+})
+
 #define OS_vfs_remove(path) ({  \
     int return_val;                            \
     asm volatile (  "movq $0x34, %%rax\n\t"    \

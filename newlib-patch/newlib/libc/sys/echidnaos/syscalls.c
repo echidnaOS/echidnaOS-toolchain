@@ -45,13 +45,11 @@ int chown(const char *path, uid_t owner, gid_t group) {
 }
 
 int utime(const char *path, const struct utimbuf *times) {
-    errno = EROFS;
-    return -1;
+    return 0;
 }
 
 int access(const char *path, int amode) {
-    errno = EROFS;
-    return -1;
+    return 0;
 }
 
 long sysconf(int name) {
@@ -82,23 +80,51 @@ int kill(int pid, int sig) {
 }
 
 int chmod(const char *path, mode_t mode) {
-    errno = EROFS;
-    return -1;
+    return 0;
 }
 
-int stat(const char *file, struct stat *st) {
-    errno = EIO;
-    return -1;
+int stat(const char *path, struct stat *st) {
+    vfs_metadata_t metadata;
+
+    if (OS_vfs_get_metadata(path, &metadata, VFS_FILE_TYPE) == VFS_FAILURE) {
+        if (OS_vfs_get_metadata(path, &metadata, VFS_DIRECTORY_TYPE) == VFS_FAILURE) {
+            if (OS_vfs_get_metadata(path, &metadata, VFS_DEVICE_TYPE) == VFS_FAILURE) {
+                errno = ENOENT;
+                return -1;
+            } else {
+                st->st_mode = S_IFBLK;
+            }
+        } else {
+            st->st_mode = S_IFDIR;
+        }
+    } else {
+        st->st_mode = S_IFREG;
+    }
+
+    st->st_dev = 0;
+    st->st_ino = 0;
+    st->st_nlink = 0;
+    st->st_uid = 0;
+    st->st_gid = 0;
+    st->st_rdev = 0;
+    st->st_size = metadata.size;
+    st->st_atime = 0;
+    st->st_mtime = 0;
+    st->st_ctime = 0;
+    st->st_blksize = 32768;
+    st->st_blocks = metadata.size / 32768 + 1;
+
+    return 0;
 }
 
 int fstat(int file, struct stat *st) {
-    errno = EIO;
-    return -1;
+    char path[2048];
+    OS_vfs_getpath(file, path);
+    return stat(path, st);
 }
 
 int lstat(const char *path, struct stat *st) {
-    errno = EIO;
-    return -1;
+    return stat(path, st);
 }
 
 int link(const char *old, const char *new) {
