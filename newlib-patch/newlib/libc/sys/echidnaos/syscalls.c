@@ -259,7 +259,7 @@ int write(int file, const void *ptr, size_t len) {
 
 void *sbrk(ptrdiff_t size) {
     size_t ptr = OS_get_heap_base() + OS_get_heap_size();
-    if (OS_resize_heap(OS_get_heap_size() + size) == -1) {
+    if (OS_resize_heap((uint64_t)((int64_t)(OS_get_heap_size()) + (int64_t)size)) == -1) {
         errno = ENOMEM;
         return (void *)-1;
     }

@@ -11,7 +11,7 @@ void _start(void) {
 
     int argc = *((int *)0x1001000);
     char **argv = (char **)0x1001010;
-    environ = (char **)0x1001020;
+    environ = (char **)0x1002000;
 
     _init_signal();
 
